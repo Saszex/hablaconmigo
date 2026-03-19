@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HablaConmigo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lato:wght@300;400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{
+  --cr:#FBF6EC;--cr2:#F0E8D2;--cr3:#E2D5B8;
+  --te:#C0411A;--te2:#D4561F;--tep:rgba(192,65,26,.08);
+  --sf:#E8A020;--sfp:rgba(232,160,32,.1);
+  --nv:#1A1E2E;--nv2:#242840;
+  --ol:#4A6B3A;--olp:rgba(74,107,58,.1);
+  --tx:#2A2018;--tx2:#5A4E3C;--tx3:#8A7D6A;
+  --bd:#DDD0B8;--bd2:#EDE3D0;
+  --cd:#FFFDF8;
+  --r:13px;--rs:8px;
+  --sh:0 2px 14px rgba(42,32,24,.09);--shl:0 6px 28px rgba(42,32,24,.15);
+  --sbw:228px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Lato',sans-serif;background:var(--cr);color:var(--tx);min-height:100vh;
+  background-image:radial-gradient(ellipse 55% 40% at 8% 92%,rgba(192,65,26,.06),transparent 55%),
+  radial-gradient(ellipse 45% 45% at 92% 8%,rgba(232,160,32,.06),transparent 55%)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--cr2)}
+::-webkit-scrollbar-thumb{background:var(--cr3);border-radius:9px}
+button{cursor:pointer;font-family:'Lato',sans-serif}
+input,textarea{font-family:'Lato',sans-serif}
+.app{display:flex;min-height:100vh}
+.sb{width:var(--sbw);min-height:100vh;position:fixed;left:0;top:0;z-index:200;
+  background:linear-gradient(180deg,var(--nv) 0%,#0E0C18 100%);
+  display:flex;flex-direction:column;box-shadow:4px 0 20px rgba(0,0,0,.28)}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo-t{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--sf);letter-spacing:-.3px}
+.sb-logo-s{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1.8px;text-transform:uppercase;margin-top:2px}
+.sb-lp{margin:10px 13px;padding:9px 11px;border-radius:var(--rs);
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);
+  display:flex;align-items:center;gap:9px;cursor:pointer;transition:.18s}
+.sb-lp:hover{background:rgba(255,255,255,.09)}
+.sb-lf{font-size:20px}
+.sb-li{flex:1}
+.sb-ln{font-size:13px;font-weight:700;color:#fff}
+.sb-lc{font-size:10px;color:rgba(255,255,255,.3)}
+.sb-xp{padding:8px 18px 11px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-xr{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px}
+.sb-xb{height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.sb-xf{height:100%;background:linear-gradient(90deg,var(--sf),#ffd060);border-radius:99px;transition:width .5s}
+.sb-nav{flex:1;padding:7px 0;overflow-y:auto}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 18px;
+  color:rgba(255,255,255,.5);font-size:13.5px;cursor:pointer;
+  border-left:3px solid transparent;transition:.16s}
+.ni:hover{color:rgba(255,255,255,.88);background:rgba(255,255,255,.04)}
+.ni.on{color:var(--sf);background:rgba(232,160,32,.1);border-left-color:var(--sf);font-weight:700}
+.ni-ic{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.ni-bd{margin-left:auto;background:var(--te);color:#fff;font-size:10px;font-weight:700;
+  padding:1px 6px;border-radius:99px}
+.sb-ft{padding:13px 18px;border-top:1px solid rgba(255,255,255,.06)}
+.sk{display:flex;align-items:center;gap:8px}
+.sk-n{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--sf)}
+.sk-t{font-size:11px;color:rgba(255,255,255,.45);line-height:1.35}
+.main{margin-left:var(--sbw);flex:1;padding:34px 38px;max-width:1080px}
+.ph{margin-bottom:26px}
+.pt{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:var(--nv);line-height:1.1}
+.ps{font-size:13.5px;color:var(--tx2);margin-top:5px}
+.card{background:var(--cd);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--bd2);overflow:hidden}
+.ch{padding:15px 20px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:'Playfair Display',serif;font-size:16px;font-weight:700}
+.cb{padding:20px}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:26px}
+.sc{background:var(--cd);border-radius:var(--r);padding:18px;box-shadow:var(--sh);
+  border:1px solid var(--bd2);text-align:center;transition:.18s}
+.sc:hover{transform:translateY(-2px);box-shadow:var(--shl)}
+.sc-ic{font-size:26px;margin-bottom:7px}
+.sc-v{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--te);line-height:1}
+.sc-l{font-size:10px;color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.6px}
+.qg{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:26px}
+.qc{background:var(--cd);border-radius:var(--r);padding:22px 18px;cursor:pointer;
+  transition:.22s;border:1px solid var(--bd2);box-shadow:var(--sh);text-align:center}
+.qc:hover{transform:translateY(-4px);box-shadow:var(--shl);border-color:var(--sf)}
+.qi{font-size:36px;display:block;margin-bottom:9px}
+.qtit{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;margin-bottom:3px}
+.qdesc{font-size:12px;color:var(--tx3);line-height:1.5}
+.lg{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px}
+.lcard{background:var(--cd);border-radius:var(--r);padding:17px 15px;cursor:pointer;
+  transition:.2s;border:2px solid var(--bd2)}
+.lcard:hover:not(.stub){transform:translateY(-3px);box-shadow:var(--shl);border-color:var(--sf)}
+.lcard.done{border-color:var(--ol);background:#F5FBF3}
+.lcard.stub{opacity:.48;cursor:not-allowed}
+.lnum{font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.lem{font-size:26px;display:block;margin-bottom:6px}
+.ltit{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--nv);line-height:1.35}
+.ltag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;
+  margin-top:9px;text-transform:uppercase;letter-spacing:.4px}
+.ta{background:var(--tep);color:var(--te)}
+.td{background:var(--olp);color:var(--ol)}
+.tl{background:var(--cr2);color:var(--tx3)}
+.sw{border:1px solid var(--bd);border-radius:10px;padding:17px 19px;margin-bottom:10px;
+  background:var(--cd);transition:.18s}
+.sw:hover{border-color:var(--sf);box-shadow:0 3px 12px rgba(232,160,32,.12)}
+.snum{float:right;font-family:'Playfair Display',serif;font-size:28px;font-weight:700;
+  color:var(--cr3);line-height:1;margin-left:10px}
+.ses{font-family:'Crimson Text',serif;font-style:italic;font-size:20px;color:var(--nv);margin-bottom:3px}
+.sph{font-size:11px;color:var(--te);font-family:monospace;letter-spacing:.3px;margin-bottom:5px}
+.spl{font-size:13.5px;font-weight:700;color:var(--tx);margin-bottom:9px}
+.snt{font-size:12px;color:var(--tx2);line-height:1.6;border-left:3px solid var(--sf);
+  padding:7px 11px;border-radius:0 7px 7px 0;background:var(--sfp)}
+.de{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+.de.R{flex-direction:row-reverse}
+.dav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:13px;flex-shrink:0;margin-top:2px}
+.L .dav{background:var(--te);color:#fff}
+.R .dav{background:var(--ol);color:#fff}
+.dbb{max-width:73%;border-radius:11px;padding:11px 15px}
+.L .dbb{background:var(--tep);border:1px solid rgba(192,65,26,.18);border-radius:4px 11px 11px 11px}
+.R .dbb{background:var(--olp);border:1px solid rgba(74,107,58,.18);border-radius:11px 4px 11px 11px}
+.drl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.des{font-family:'Crimson Text',serif;font-style:italic;font-size:16px;color:var(--nv);margin-bottom:3px}
+.dpl{font-size:11px;color:var(--tx3)}
+.fcs{perspective:1300px;width:100%;max-width:510px;margin:0 auto;height:255px}
+.fc{width:100%;height:100%;position:relative;transform-style:preserve-3d;
+  transition:transform .52s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc.flip{transform:rotateY(180deg)}
+.ff{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 34px;box-shadow:var(--shl)}
+.ff-fr{background:linear-gradient(145deg,var(--nv),#0E0C18);color:#fff}
+.ff-bk{background:linear-gradient(145deg,var(--te),#851a04);color:#fff;transform:rotateY(180deg)}
+.fc-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;opacity:.4;margin-bottom:14px}
+.fc-txt{font-family:'Crimson Text',serif;font-style:italic;font-size:25px;text-align:center;line-height:1.4}
+.fc-sub{font-size:11px;opacity:.45;margin-top:13px}
+.fc-note{font-size:12px;opacity:.82;margin-top:11px;text-align:center;line-height:1.55;
+  font-style:normal;font-family:'Lato',sans-serif}
+.srsg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;max-width:510px;margin:18px auto 0}
+.srsb{padding:11px 6px;border-radius:9px;border:none;font-size:11.5px;font-weight:700;
+  transition:.18s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.srsb:hover{transform:translateY(-2px);filter:brightness(.93)}
+.sr1{background:#F5E5E5;color:#9A1515}
+.sr2{background:#FEF0D6;color:#925800}
+.sr3{background:#E4EDF8;color:#174C7A}
+.sr4{background:#E4F2E4;color:#225522}
+.sri{font-size:9.5px;font-weight:400;opacity:.6}
+.fcdot{text-align:center;margin-top:10px}
+.qq{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:14px;color:var(--nv)}
+.qopt{padding:12px 17px;border:2px solid var(--bd);border-radius:9px;cursor:pointer;
+  margin-bottom:8px;font-size:13.5px;transition:.16s;background:var(--cd)}
+.qopt:hover:not(.qdis){border-color:var(--sf);background:var(--sfp)}
+.qopt.qsel{border-color:var(--sf);background:var(--sfp)}
+.qopt.qcor{border-color:var(--ol);background:var(--olp);color:var(--ol)}
+.qopt.qwrg{border-color:var(--te);background:var(--tep);color:var(--te)}
+.qopt.qdis{cursor:default}
+.scng{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px;margin-bottom:20px}
+.scc{padding:17px 12px;border-radius:11px;border:2px solid var(--bd2);cursor:pointer;
+  text-align:center;transition:.18s;background:var(--cd)}
+.scc:hover,.scc.on{border-color:var(--te);background:var(--tep)}
+.sci{font-size:30px;display:block;margin-bottom:7px}
+.scn{font-size:12px;font-weight:700;color:var(--tx);line-height:1.4}
+.cw{height:350px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;
+  background:#F6F0E6;border-radius:11px;margin-bottom:11px;border:1px solid var(--bd)}
+.cm{max-width:80%;padding:10px 14px;border-radius:11px;font-size:13.5px;line-height:1.58}
+.cm.u{align-self:flex-end;background:var(--nv);color:#fff;border-radius:11px 11px 4px 11px}
+.cm.a{align-self:flex-start;background:var(--cd);border:1px solid var(--bd);border-radius:4px 11px 11px 11px}
+.cm.ty{font-style:italic;color:var(--tx3);align-self:flex-start}
+.cir{display:flex;gap:8px}
+.ci{flex:1;padding:11px 15px;border:2px solid var(--bd);border-radius:9px;
+  font-size:13.5px;background:var(--cd);transition:.18s}
+.ci:focus{outline:none;border-color:var(--sf)}
+.prb{margin-bottom:11px}
+.prl{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;color:var(--tx2);font-weight:700}
+.prbar{height:7px;background:var(--cr2);border-radius:99px;overflow:hidden}
+.prf{height:100%;background:linear-gradient(90deg,var(--te),var(--sf));border-radius:99px;transition:width .5s}
+.hmg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.hmc{aspect-ratio:1;border-radius:3px;background:var(--cr2)}
+.hmc.l1{background:rgba(192,65,26,.2)}.hmc.l2{background:rgba(192,65,26,.45)}
+.hmc.l3{background:rgba(192,65,26,.7)}.hmc.l4{background:var(--te)}
+.ach{display:flex;align-items:center;gap:12px;padding:12px 15px;border-radius:10px;
+  border:1px solid var(--bd);background:var(--cd);margin-bottom:8px}
+.ach-lk{filter:grayscale(1);opacity:.38}
+.ach-i{font-size:26px}
+.ach-t{font-weight:700;font-size:13.5px}
+.ach-d{font-size:11.5px;color:var(--tx3)}
+.stit{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;
+  margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--bd2)}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:4px}
+.fi{width:100%;padding:10px 13px;border:2px solid var(--bd);border-radius:8px;
+  font-size:13.5px;background:var(--cd);transition:.18s}
+.fi:focus{outline:none;border-color:var(--sf)}
+.los{display:flex;gap:10px}
+.lo{flex:1;padding:13px 9px;border:2px solid var(--bd2);border-radius:10px;cursor:pointer;
+  text-align:center;transition:.18s;background:var(--cd)}
+.lo:hover,.lo.on{border-color:var(--te);background:var(--tep)}
+.lo-f{font-size:26px;display:block;margin-bottom:4px}
+.lo-n{font-size:12px;font-weight:700}
+.lo-s{font-size:10px;color:var(--tx3);margin-top:1px}
+.btn{padding:9px 18px;border-radius:8px;border:none;font-size:13px;font-weight:700;transition:.18s}
+.btn-p{background:var(--te);color:#fff}.btn-p:hover{background:var(--te2)}
+.btn-s{background:var(--cr2);color:var(--tx)}.btn-s:hover{background:var(--cr3)}
+.btn-sf{background:var(--sf);color:var(--nv)}.btn-sf:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.bsm{padding:6px 13px;font-size:12px}
+.tabs{display:flex;border-bottom:2px solid var(--bd2);margin-bottom:20px}
+.tab{padding:9px 18px;font-size:13px;font-weight:700;color:var(--tx3);cursor:pointer;
+  border-bottom:3px solid transparent;margin-bottom:-2px;transition:.16s}
+.tab:hover{color:var(--te)}
+.tab.on{color:var(--te);border-bottom-color:var(--te)}
+.stitle{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;
+  margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.stitle::after{content:'';flex:1;height:1px;background:var(--bd);margin-left:5px}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.4px}
+.ba1{background:var(--tep);color:var(--te)}
+.bok{background:var(--olp);color:var(--ol)}
+.bsf{background:rgba(232,160,32,.15);color:#7A5500}
+.ib{padding:12px 15px;background:var(--sfp);border-left:4px solid var(--sf);
+  border-radius:0 8px 8px 0;font-size:12.5px;color:var(--tx2);line-height:1.65;margin-bottom:15px}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--nv);color:#fff;
+  padding:13px 18px;border-radius:10px;font-size:13.5px;box-shadow:0 8px 30px rgba(0,0,0,.3);
+  z-index:999;animation:ti .28s ease;max-width:300px}
+@keyframes ti{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes dot{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+.dvd{height:1px;background:var(--bd2);margin:18px 0}
+.empt{text-align:center;padding:44px 20px;color:var(--tx3)}
+.empt-i{font-size:52px;display:block;margin-bottom:12px}
+.empt-t{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--tx2);margin-bottom:6px}
+.empt-d{font-size:13.5px;line-height:1.65}
+.api-w{padding:13px 16px;background:var(--sfp);border:1px solid var(--sf);
+  border-radius:9px;font-size:13px;color:var(--tx2);margin-bottom:16px}
+@media(max-width:860px){
+  :root{--sbw:0px}
+  .sb{display:none}.main{padding:18px 15px}
+  .sg{grid-template-columns:repeat(2,1fr)}.qg{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useCallback,useMemo,useRef}=React;
+
+const LANGS={
+  es:{name:'Hiszpański',flag:'🇪🇸',native:'Español',gr:h=>h<12?'¡Buenos días!':h<18?'¡Buenas tardes!':'¡Buenas noches!'},
+  it:{name:'Włoski',flag:'🇮🇹',native:'Italiano',gr:h=>h<12?'Buongiorno!':h<18?'Buon pomeriggio!':'Buonasera!'},
+  fr:{name:'Francuski',flag:'🇫🇷',native:'Français',gr:h=>h<12?'Bonjour!':h<18?'Bon après-midi!':'Bonsoir!'},
+};
+
+const LESSONS=[
+  {id:1,icon:'👋',level:'A1',title:'Jak się przywitać i pożegnać?',
+    sentences:[
+      {es:'¡Hola! ¿Qué tal?',ph:'[ˈo.la ˈke ˈtal]',pl:'Cześć! Co słychać?',note:'¡Hola! działa o każdej porze dnia. ¿Qué tal? to nieformalne "co słychać" — używaj z kolegami, nie w urzędzie.'},
+      {es:'Buenos días, ¿cómo está usted?',ph:'[ˈbwe.nos ˈdi.as ˈko.mo esˈta usˈted]',pl:'Dzień dobry, jak się Pan/Pani miewa?',note:'"Usted" to formalne "ty". W Ameryce Łacińskiej używane częściej niż w Hiszpanii. Dotyczy nieznajomych, starszych, przełożonych.'},
+      {es:'¡Hasta mañana! Que descanses.',ph:'[ˈas.ta ma.ˈɲa.na ke des.ˈkan.ses]',pl:'Do jutra! Odpoczywaj.',note:'"Que descanses" = żebyś odpoczął/a. Ciepłe życzenie wieczorne. Dla grupy: Que descanséis.'},
+      {es:'Buenas tardes, señora García.',ph:'[ˈbwe.nas ˈtar.ðes se.ˈɲo.ra ɣar.ˈθi.a]',pl:'Dzień dobry po południu, Pani García.',note:'Buenas tardes — od ok. 14:00 do zmierzchu. W Andaluzji mówią samo "Buenas" przez cały dzień!'},
+      {es:'¡Hola a todos! ¿Cómo estáis?',ph:'[ˈo.la a ˈto.ðos ˈko.mo es.ˈtais]',pl:'Cześć wszystkim! Jak się macie?',note:'"Estáis" — forma dla grupy używana TYLKO w Hiszpanii. W Ameryce Łacińskiej: ¿Cómo están ustedes?'},
+      {es:'Mucho gusto en conocerte.',ph:'[ˈmu.tʃo ˈɡus.to en ko.no.ˈθer.te]',pl:'Bardzo miło mi cię poznać.',note:'"Mucho gusto" pasuje wszędzie. Alternatywa: Encantado/Encantada — końcówka zależy od płci MÓWIĄCEGO.'},
+      {es:'¡Adiós! ¡Cuídate mucho!',ph:'[a.ˈðjos ˈkwi.ða.te ˈmu.tʃo]',pl:'Do widzenia! Bardzo dbaj o siebie!',note:'"¡Cuídate!" pochodzi od cuidarse (dbać o siebie). Ciepłe pożegnanie. W pracy wolej "Hasta luego" — neutralniejsze.'},
+      {es:'Nos vemos el lunes, ¿de acuerdo?',ph:'[nos ˈbe.mos el ˈlu.nes de a.ˈkwer.ðo]',pl:'Widzimy się w poniedziałek, dobrze?',note:'"¿De acuerdo?" = zgoda? / OK? Odpowiedź: "De acuerdo" lub "¡Vale!" — typowo hiszpańskie OK.'},
+      {es:'¡Bienvenido a España! ¡Que disfrutes!',ph:'[bjen.be.ˈni.ðo a es.ˈpa.ɲa ke ðis.ˈfru.tes]',pl:'Witaj w Hiszpanii! Baw się dobrze!',note:'"Bienvenido" (on) / "Bienvenida" (ona) / "Bienvenidos" (grupa). "¡Que disfrutes!" — niech ci się podoba.'},
+      {es:'Hasta pronto, espero verte de nuevo.',ph:'[ˈas.ta ˈpron.to es.ˈpe.ro ˈber.te de ˈnwe.βo]',pl:'Do zobaczenia wkrótce, mam nadzieję znowu cię zobaczyć.',note:'"Espero + bezokolicznik" = mam nadzieję coś zrobić. Naturalna konstrukcja: Espero verte (zobaczyć cię).'},
+    ],
+    dialog:{title:'Pierwsze spotkanie na kursie językowym',rA:'Ana',rB:'Bartosz',lines:[
+      {r:'A',es:'¡Hola! Soy Ana. ¿Tú eres nuevo aquí?',pl:'Cześć! Jestem Ana. Czy jesteś tu nowy?'},
+      {r:'B',es:'Sí, me llamo Bartosz. Soy de Polonia. ¡Mucho gusto!',pl:'Tak, nazywam się Bartosz. Jestem z Polski. Bardzo mi miło!'},
+      {r:'A',es:'¡Encantada, Bartosz! ¿Hablas algo de español?',pl:'Miło mi, Bartosz! Mówisz trochę po hiszpańsku?'},
+      {r:'B',es:'Muy poco, estoy aprendiendo. ¿Y tú? ¿Eres española?',pl:'Bardzo mało, uczę się. A ty? Jesteś Hiszpanką?'},
+      {r:'A',es:'No, soy argentina, de Buenos Aires. ¡Pero hablo español nativo!',pl:'Nie, jestem Argentynką z Buenos Aires. Ale mówię jak native!'},
+      {r:'B',es:'¡Qué interesante! Bueno, ¡hasta la próxima clase!',pl:'Jak ciekawe! No dobrze, do następnej lekcji!'},
+    ]},
+    quiz:[
+      {q:'Jak powiesz "dzień dobry" rano?',opts:['Buenos días','Buenas tardes','Buenas noches','Buen día'],ok:0},
+      {q:'Co oznacza "¡Cuídate!"?',opts:['Dbaj o siebie!','Do zobaczenia!','Jak się masz?','Dziękuję!'],ok:0},
+      {q:'Skąd pochodzi Ana?',opts:['Z Argentyny','Z Hiszpanii','Z Polski','Z Meksyku'],ok:0},
+    ]},
+  {id:2,icon:'🪪',level:'A1',title:'Jak się przedstawić?',
+    sentences:[
+      {es:'Me llamo Marcin, ¿y tú?',ph:'[me ˈʎa.mo mar.ˈθin i ˈtu]',pl:'Nazywam się Marcin, a ty?',note:'"Me llamo" pochodzi od llamarse (czasownik zwrotny). Naturalniejsze niż "Mi nombre es".'},
+      {es:'Soy de Polonia, de la ciudad de Wrocław.',ph:'[ˈsoj de po.ˈlo.nja de la θju.ˈðað]',pl:'Jestem z Polski, z miasta Wrocław.',note:'KLUCZOWE: "Soy de" (SER) dla stałego pochodzenia. "Estoy en Wrocław" (ESTAR) dla tymczasowej lokalizacji.'},
+      {es:'Tengo treinta y dos años.',ph:'[ˈteŋ.ɡo ˈtrejn.ta i ˈðos ˈa.ɲos]',pl:'Mam trzydzieści dwa lata.',note:'Wiek po hiszpańsku używa TENER (mieć), nie SER/ESTAR! Błąd: ~~Soy de 32 años~~.'},
+      {es:'Soy ingeniero y trabajo en Varsovia.',ph:'[ˈsoj iŋ.xe.ˈnje.ro i tra.ˈβa.xo en βar.so.ˈβja]',pl:'Jestem inżynierem i pracuję w Warszawie.',note:'Zawód po "Soy" — BEZ przedimka! Po angielsku: "I am AN engineer", po hiszpańsku: "Soy ingeniero".'},
+      {es:'Estoy casado y tengo dos hijos.',ph:'[es.ˈtoj ka.ˈsa.ðo i ˈteŋ.ɡo ˈðos ˈi.xos]',pl:'Jestem żonaty i mam dwoje dzieci.',note:'Stan cywilny używa ESTAR — bo może się zmienić! Estoy casado/a, divorciado/a, soltero/a.'},
+      {es:'Mi esposa se llama Agnieszka.',ph:'[mi es.ˈpo.sa se ˈʎa.ma ag.ˈɲeʃ.ka]',pl:'Moja żona ma na imię Agnieszka.',note:'"Mi esposa" = moja żona (formalnie). Potocznie: "mi mujer". "Mi marido" = mój mąż. "Mi pareja" = partner/partnerka.'},
+      {es:'Hablo polaco y un poco de inglés.',ph:'[ˈa.βlo po.ˈla.ko i un ˈpo.ko ðe iŋ.ˈɡles]',pl:'Mówię po polsku i trochę po angielsku.',note:'Języki po "hablo" — bez przedimka, małą literą! Skala: un poco → bastante bien → con fluidez.'},
+      {es:'¿Cuántos años tienes tú?',ph:'[ˈkwan.tos ˈa.ɲos ˈtje.nes ˈtu]',pl:'Ile ty masz lat?',note:'Standardowe pytanie o wiek. Formalnie: ¿Cuántos años tiene usted?'},
+      {es:'¿De dónde eres exactamente?',ph:'[de ˈdon.de ˈe.ɾes ek.sak.ta.ˈmen.te]',pl:'Skąd dokładnie pochodzisz?',note:'"¿De dónde eres?" — SER dla stałego pochodzenia. "¿Dónde estás?" (ESTAR) — gdzie jesteś teraz?'},
+      {es:'Encantado de conocerle, señor Kowalski.',ph:'[en.kan.ˈta.ðo de ko.no.ˈθer.le se.ˈɲor]',pl:'Miło mi Pana poznać, Panie Kowalski.',note:'"Encantado" (mężczyzna) lub "Encantada" (kobieta) — przymiotnik zależy od płci MÓWIĄCEGO.'},
+    ],
+    dialog:{title:'Spotkanie biznesowe w Madrycie',rA:'Pani López',rB:'Marcin',lines:[
+      {r:'A',es:'Buenas tardes. Soy Carmen López, directora de ventas.',pl:'Dzień dobry. Jestem Carmen López, dyrektorka sprzedaży.'},
+      {r:'B',es:'Mucho gusto, señora López. Me llamo Marcin, soy de Polonia.',pl:'Bardzo mi miło, Pani López. Nazywam się Marcin, jestem z Polski.'},
+      {r:'A',es:'¡Qué interesante! ¿Y a qué se dedica usted?',pl:'Jak interesująco! A czym się Pan zajmuje?'},
+      {r:'B',es:'Soy ingeniero de software. Trabajo para una empresa polaca.',pl:'Jestem inżynierem oprogramowania. Pracuję dla polskiej firmy.'},
+      {r:'A',es:'Perfecto. ¿Habla usted español con fluidez?',pl:'Doskonale. Czy mówi Pan płynnie po hiszpańsku?'},
+      {r:'B',es:'No mucho, estoy aprendiendo. Pero entiendo bastante bien.',pl:'Niezbyt, uczę się. Ale rozumiem całkiem dobrze.'},
+    ]},
+    quiz:[
+      {q:'Jak powiedzieć "Mam 35 lat"?',opts:['Tengo 35 años','Soy de 35 años','Estoy 35 años','Soy 35 viejo'],ok:0},
+      {q:'Dlaczego "Soy ingeniero" — bez przedimka?',opts:['Przy zawodach po soy nie używamy przedimka','Bo słowo zaczyna się na samogłoskę','Zawsze pomijamy przedimek','To błąd'],ok:0},
+      {q:'Czym zajmuje się Marcin?',opts:['Inżynier oprogramowania','Dyrektor sprzedaży','Tłumacz','Nauczyciel'],ok:0},
+    ]},
+  {id:3,icon:'😊',level:'A1',title:'Co słychać? Jak się masz?',
+    sentences:[
+      {es:'¿Cómo estás? ¿Todo bien?',ph:'[ˈko.mo es.ˈtas ˈto.ðo ˈβjen]',pl:'Jak się masz? Wszystko dobrze?',note:'Nieformalne (forma "ty"). Formalne: ¿Cómo está usted? Używamy ESTAR — pytamy o stan chwilowy.'},
+      {es:'Estoy muy bien, gracias. ¿Y tú?',ph:'[es.ˈtoj muj ˈβjen ˈɡra.θjas i ˈtu]',pl:'Mam się bardzo dobrze, dziękuję. A ty?',note:'Na "gracias": De nada (nie ma za co), Con mucho gusto (z przyjemnością). Skala: muy bien → bien → regular → mal → fatal.'},
+      {es:'Más o menos, estoy un poco cansado.',ph:'[mas o ˈme.nos es.ˈtoj un ˈpo.ko kan.ˈsa.ðo]',pl:'Tak sobie, jestem trochę zmęczony.',note:'"Más o menos" = dosłownie "więcej lub mniej" = tak sobie. Kobieta powie "cansada" — przymiotniki mają rodzaj!'},
+      {es:'¡Estoy genial! Acabo de regresar de vacaciones.',ph:'[es.ˈtoj xe.ˈnjal a.ˈka.βo ðe re.ɣre.ˈsar de βa.ka.ˈsjo.nes]',pl:'Czuję się świetnie! Właśnie wróciłem z wakacji.',note:'"Acabo de + bezokolicznik" = właśnie zrobiłem. Superprzydatna! Acabo de comer (właśnie jadłem).'},
+      {es:'Regular, tengo mucho trabajo esta semana.',ph:'[re.ɡu.ˈlar ˈteŋ.ɡo ˈmu.tʃo tra.ˈβa.xo ˈes.ta se.ˈma.na]',pl:'Przeciętnie, mam dużo pracy w tym tygodniu.',note:'FAŁSZYWY PRZYJACIEL: "regular" po polsku = regularny, ale po hiszpańsku = jako tako, nijako. Typowy błąd Polaków!'},
+      {es:'No me encuentro bien, creo que tengo fiebre.',ph:'[no me en.ˈkwen.tro ˈβjen ˈkre.o ke ˈteŋ.ɡo ˈfje.βre]',pl:'Nie czuję się dobrze, chyba mam gorączkę.',note:'"Creo que" = myślę że. "Tengo fiebre" = mam gorączkę (TENER). Używaj u lekarza lub w aptece.'},
+      {es:'¡Qué alegría verte! ¿Cuánto tiempo sin vernos?',ph:'[ke a.le.ˈɣri.a ˈβer.te ˈkwan.to ˈtjem.po sin ˈβer.nos]',pl:'Ale radość cię widzieć! Ile czasu minęło odkąd się nie widzieliśmy?',note:'"¡Qué + rzeczownik!" = co za / jakie: ¡Qué alegría! (co za radość!), ¡Qué frío! (co za zimno!).'},
+      {es:'Estoy nervioso porque tengo una entrevista mañana.',ph:'[es.ˈtoj ner.ˈβjo.so ˈpor.ke ˈteŋ.ɡo ˈu.na en.tre.ˈβis.ta ma.ˈɲa.na]',pl:'Jestem zdenerwowany, bo mam jutro rozmowę kwalifikacyjną.',note:'"Porque" (bo) = spójnik przyczyny. Nie myl z "¿Por qué?" (dlaczego?) — to pytanie. Kobieta: Estoy nerviosa.'},
+      {es:'Me siento un poco raro hoy, no sé por qué.',ph:'[me ˈsjen.to un ˈpo.ko ˈra.ro ˈoj no ˈse por.ˈke]',pl:'Czuję się dziś trochę dziwnie, nie wiem dlaczego.',note:'"Sentirse" = czuć się. Obie formy są poprawne: "Estoy cansado" i "Me siento cansado".'},
+      {es:'¡Fenomenal! Acabo de tener muy buenas noticias.',ph:'[fe.no.me.ˈnal a.ˈka.βo ðe te.ˈner muj ˈβwe.nas no.ˈti.θjas]',pl:'Fenomenalnie! Właśnie dostałem bardzo dobre wiadomości.',note:'Skala: fenomenal → genial → muy bien → bien → regular → mal → fatal. "Fatal" = OKROPNIE (nie "fatalnie"!).'},
+    ],
+    dialog:{title:'Poniedziałkowy poranek w biurze',rA:'Karolina',rB:'Diego',lines:[
+      {r:'A',es:'¡Buenos días, Diego! ¿Cómo fue el fin de semana?',pl:'Dzień dobry, Diego! Jak minął weekend?'},
+      {r:'B',es:'¡Hola, Karolina! Fue genial, fui a la playa con la familia. ¿Y el tuyo?',pl:'Cześć, Karolina! Był świetny, pojechałem na plażę z rodziną. A twój?'},
+      {r:'A',es:'Regular, la verdad. Estuve enferma todo el sábado.',pl:'Tak sobie, szczerze mówiąc. Byłam chora przez całą sobotę.'},
+      {r:'B',es:'¡Qué pena! ¿Ya estás mejor?',pl:'Ale szkoda! Już lepiej?'},
+      {r:'A',es:'Sí, mucho mejor, gracias. ¿Tienes mucho trabajo hoy?',pl:'Tak, znacznie lepiej, dziękuję. Masz dziś dużo pracy?'},
+      {r:'B',es:'Más o menos. Tengo una reunión a las diez. ¡Hasta luego!',pl:'Mniej więcej. Mam spotkanie o dziesiątej. Do zobaczenia!'},
+    ]},
+    quiz:[
+      {q:'Jak powiedzieć "właśnie zjadłem"?',opts:['Acabo de comer','Acabo comer','Acabé de comer ahora','Comí ahora mismo'],ok:0},
+      {q:'Co oznacza "Fatal" jako odpowiedź na ¿Cómo estás?',opts:['Okropnie, bardzo źle','Doskonale!','Przeciętnie','Niezbyt dobrze'],ok:0},
+      {q:'Dlaczego "Estoy cansado", a nie "Soy cansado"?',opts:['Zmęczenie to stan chwilowy (ESTAR), nie stała cecha (SER)','Bo cansado zaczyna się na c','SER tylko dla osób','Oba są poprawne'],ok:0},
+    ]},
+  {id:4,icon:'🌸',level:'A1',title:'Wielkanoc w Hiszpanii — kultura',
+    sentences:[
+      {es:'La Semana Santa es la celebración más importante del año.',ph:'[la se.ˈma.na ˈsan.ta es la θe.le.βra.ˈθjon mas im.por.ˈtan.te]',pl:'Wielki Tydzień to najważniejsza uroczystość roku.',note:'Semana Santa w Hiszpanii to głęboka uroczystość religijna. Najpiękniejsze procesje: Sewilla, Malaga, Valladolid.'},
+      {es:'Las procesiones recorren las calles con pasos y música.',ph:'[las pro.θe.ˈsjo.nes re.ˈko.ren las ˈka.ʎes kon ˈpa.sos i ˈmu.si.ka]',pl:'Procesje przechodzą przez ulice z rzeźbami i muzyką.',note:'"Pasos" to platformy z figurami religijnymi. Niosą je "costaleros" — mogą ważyć kilka ton!'},
+      {es:'¿Sabes qué se come en Semana Santa?',ph:'[ˈsa.βes ke se ˈko.me en se.ˈma.na ˈsan.ta]',pl:'Wiesz, co się je podczas Wielkiego Tygodnia?',note:'"¿Sabes qué...?" = czy wiesz, co? Tradycyjne potrawy: torrijas, potaje de vigilia, bacalao (solony dorsz).'},
+      {es:'El Domingo de Resurrección celebramos con la familia.',ph:'[el do.ˈmiŋ.ɡo de re.su.rek.ˈθjon θe.le.ˈβra.mos kon la fa.ˈmi.lja]',pl:'W Niedzielę Zmartwychwstania świętujemy z rodziną.',note:'"Celebramos" = my świętujemy. Końcówka "-amos" to 1. os. l.mn. Wielkanoc w Hiszpanii = czas rodzinny.'},
+      {es:'Los niños buscan huevos de chocolate escondidos en el jardín.',ph:'[los ˈni.ɲos ˈbus.kan ˈwe.βos de tʃo.ko.ˈla.te es.kon.ˈdi.ðos]',pl:'Dzieci szukają czekoladowych jajek ukrytych w ogrodzie.',note:'Tradycja szukania jajek to wpływ północnoeuropejski. Tradycyjnie: "monas de Pascua" od rodziców chrzestnych.'},
+      {es:'¡Felices Pascuas! ¿Cómo celebráis en vuestra familia?',ph:'[fe.ˈli.θes ˈpas.kwas ˈko.mo θe.le.ˈβrais en ˈβwes.tra fa.ˈmi.lja]',pl:'Wesołych Świąt! Jak świętujecie w swojej rodzinie?',note:'UWAGA: "¡Felices Pascuas!" = i na Wielkanoc, i na Boże Narodzenie! Kontekst decyduje.'},
+      {es:'En Sevilla, la Virgen de la Macarena es la más querida.',ph:'[en se.ˈβi.ʎa la ˈβir.xen de la ma.ka.ˈre.na es la mas ke.ˈri.ða]',pl:'W Sewilli Dziewica Makarena jest najbardziej ukochaną madonną.',note:'Gdy jej procesja wychodzi w Wielki Piątek, ludzie płaczą. Imię "Macarena" pochodzi od tej Madonny, nie od piosenki!'},
+      {es:'Durante la Semana Santa, los españoles van al pueblo.',ph:'[du.ˈran.te la se.ˈma.na ˈsan.ta los es.pa.ˈɲo.les ban al ˈpwe.βlo]',pl:'Podczas Wielkiego Tygodnia Hiszpanie jeżdżą do wioski.',note:'"Ir al pueblo" = jechać do wioski dziadków. W czasie świąt wielkie miasta się wyludniają.'},
+      {es:'Las torrijas son el postre típico de esta época.',ph:'[las to.ˈri.xas son el pos.ˈtre ˈti.pi.ko ðe ˈes.ta ˈe.po.ka]',pl:'Torrijas to typowy deser tej pory roku.',note:'Torrijas = chleb nasączony mlekiem, smażony z cynamonem i cukrem. Podobne do French toast! Przepis z XV w.'},
+      {es:'Este año queremos ir a ver las procesiones en Málaga.',ph:'[ˈes.te ˈa.ɲo ke.ˈre.mos ir a ˈβer las pro.θe.ˈsjo.nes en ˈma.la.ɣa]',pl:'W tym roku chcemy pojechać zobaczyć procesje w Maladze.',note:'"Querer + bezokolicznik" = chcieć coś zrobić. Nieregularny (e→ie): quiero, quieres, quiere, queremos.'},
+    ],
+    dialog:{title:'Rozmowa o planach wielkanocnych',rA:'Marta',rB:'Paco',lines:[
+      {r:'A',es:'Paco, ¿qué planes tienes para Semana Santa?',pl:'Paco, jakie masz plany na Wielki Tydzień?'},
+      {r:'B',es:'Voy a mi pueblo, a casa de mis abuelos en Andalucía. ¿Y tú?',pl:'Jadę do mojej wioski, do domu moich dziadków w Andaluzji. A ty?'},
+      {r:'A',es:'¡Qué bien! Nosotros queremos ver las procesiones en Sevilla.',pl:'Super! My chcemy zobaczyć procesje w Sewilli.'},
+      {r:'B',es:'¡Os va a encantar! Son impresionantes, especialmente la Macarena.',pl:'Na pewno wam się spodoba! Są imponujące, zwłaszcza Makarena.'},
+      {r:'A',es:'¿Y se come bien por allí en estas fechas?',pl:'A dobrze się je w tamtych stronach w tym czasie?'},
+      {r:'B',es:'¡Claro! Hay torrijas en todos los bares. ¡Es tradición!',pl:'Oczywiście! Torrijas są w każdym barze. To tradycja!'},
+    ]},
+    quiz:[
+      {q:'Co to są "pasos" w procesji?',opts:['Platformy z figurami religijnymi','Tańce wielkanocne','Słodycze','Muzycy w procesji'],ok:0},
+      {q:'Jak powiedzieć "chcemy pojechać"?',opts:['Queremos ir','Queremos vamos','Quieremos ir','Queremos irnos'],ok:0},
+      {q:'Kiedy używamy "¡Felices Pascuas!"?',opts:['Na Wielkanoc i Boże Narodzenie','Tylko na Wielkanoc','Tylko na Boże Narodzenie','Na każde święto'],ok:0},
+    ]},
+  {id:5,icon:'🙏',level:'A1',title:'Zwroty grzecznościowe',
+    sentences:[
+      {es:'Por favor, ¿me puede traer la carta?',ph:'[por fa.ˈβor me ˈpwe.ðe tra.ˈer la ˈkar.ta]',pl:'Proszę, czy może mi Pan/Pani przynieść kartę dań?',note:'"Por favor" zawsze ociepla prośbę. UWAGA: "la carta" = karta dań. "El menú" po hiszpańsku to DANIE DNIA!'},
+      {es:'Gracias por todo, ha sido un placer.',ph:'[ˈɡra.θjas por ˈto.ðo a ˈsi.ðo un pla.ˈθer]',pl:'Dziękuję za wszystko, to była przyjemność.',note:'"Ha sido" = było (pretérito perfecto). "Un placer" = przyjemność. Eleganckie zakończenie spotkania.'},
+      {es:'Perdona, ¿tienes un momento?',ph:'[per.ˈðo.na ˈtje.nes un mo.ˈmen.to]',pl:'Przepraszam, masz chwilę?',note:'KLUCZOWE: "Perdona/e" = przepraszam (przerywam komuś). "Lo siento" = przepraszam (wyrządziłem krzywdę). Nie zamieniaj!'},
+      {es:'¡Lo siento mucho! Ha sido un error mío.',ph:'[lo ˈsjen.to ˈmu.tʃo a ˈsi.ðo un e.ˈror ˈmi.o]',pl:'Bardzo przepraszam! To był mój błąd.',note:'"Lo siento" dosłownie = "czuję to". Używasz gdy wyrządziłeś/aś komuś krzywdę lub wyrażasz współczucie.'},
+      {es:'Con permiso, necesito pasar.',ph:'[kon per.ˈmi.so ne.θe.ˈsi.to pa.ˈsar]',pl:'Z przeproszeniem, muszę przejść.',note:'"Con permiso" = z pozwoleniem. Niezastąpione w metrze i autobusie. Odpowiedź: "Pase" lub ustąpienie miejsca.'},
+      {es:'¿Puedo ayudarte en algo?',ph:'[ˈpwe.ðo a.ju.ˈðar.te en ˈal.ɣo]',pl:'Mogę ci w czymś pomóc?',note:'"Poder + bezokolicznik" = móc coś zrobić. "¿Puedo...?" = Czy mogę...? Wszechstronne wyrażenie.'},
+      {es:'Sí, claro, con mucho gusto.',ph:'[ˈsi ˈkla.ro kon ˈmu.tʃo ˈɡus.to]',pl:'Tak, oczywiście, z przyjemnością.',note:'"Con mucho gusto" = elegancka odpowiedź na prośbę. Alternatywy: "De nada", "¡Claro que sí!", "¡Faltaría más!".'},
+      {es:'Disculpe, creo que se ha equivocado de mesa.',ph:'[dis.ˈkul.pe ˈkre.o ke se a e.ki.βo.ˈka.ðo de ˈme.sa]',pl:'Przepraszam, myślę że pomylił się Pan ze stolikiem.',note:'"Disculpe" = bardziej eleganckie niż "Perdone". "Equivocarse" = mylić się. Forma zwrotna w pretérito perfecto.'},
+      {es:'No hay de qué, ha sido un placer ayudarte.',ph:'[no aj ðe ˈke a ˈsi.ðo un pla.ˈθer a.ju.ˈðar.te]',pl:'Nie ma za co, to była przyjemność ci pomóc.',note:'"No hay de qué" = nie ma za co (elegantsze niż "De nada"). W Meksyku: "Para servirle" (do Pana usług).'},
+      {es:'¿Le molesta si abro la ventana?',ph:'[le mo.ˈles.ta si ˈa.βro la βen.ˈta.na]',pl:'Czy przeszkadza Panu/Pani, jeśli otworzę okno?',note:'"¿Le molesta si...?" = czy przeszkadza Panu/Pani jeśli...? Bardzo grzeczna forma pytania o pozwolenie.'},
+    ],
+    dialog:{title:'W restauracji — elegancka obsługa',rA:'Kelner',rB:'Klient',lines:[
+      {r:'A',es:'Buenas noches, bienvenidos. ¿Tienen reserva?',pl:'Dobry wieczór, witamy. Czy mają Państwo rezerwację?'},
+      {r:'B',es:'Sí, a nombre de Kowalski, para dos personas, por favor.',pl:'Tak, na nazwisko Kowalski, dla dwóch osób, proszę.'},
+      {r:'A',es:'Perfecto. Por aquí, por favor. ¿Les traigo la carta?',pl:'Doskonale. Tędy proszę. Przyniosę Państwu kartę dań?'},
+      {r:'B',es:'Sí, por favor. Y disculpe, ¿pueden traer también agua sin gas?',pl:'Tak, proszę. I przepraszam, czy mogą Państwo przynieść też wodę niegazowaną?'},
+      {r:'A',es:'Por supuesto, con mucho gusto.',pl:'Oczywiście, z przyjemnością.'},
+      {r:'B',es:'Muchas gracias. Todo muy amable.',pl:'Bardzo dziękuję. Wszystko bardzo uprzejmie.'},
+    ]},
+    quiz:[
+      {q:'Kiedy używasz "Lo siento", a kiedy "Perdona"?',opts:['Lo siento = za krzywdę; Perdona = by zwrócić uwagę','To synonimy','Perdona = formalnie; Lo siento = nieformalnie','Lo siento = mówisz do siebie'],ok:0},
+      {q:'Co mówisz, gdy chcesz przejść obok kogoś?',opts:['Con permiso','Lo siento','Perdona, por favor','Disculpe el paso'],ok:0},
+      {q:'Co oznacza "La carta" w restauracji?',opts:['Karta dań / Menu','Rachunek','Napój','Rezerwacja'],ok:0},
+    ]},
+  ...Array.from({length:35},(_,i)=>{
+    const icons=['🔤','☕','📚','🔢','🎨','💫','📍','🤔','👨‍👩‍👧','🗣️','🍽️','🏠','📅','⏰','🌅','🕐','🥐','🍷','👗','🩺','🛋️','⛅','✈️','🚂','⚽','🐕','🏛️','🥬','🎄','✨','🍊','🌩️','🗺️','💯','🍺'];
+    const titles=['Alfabet i wymowa','Liczebniki 0-10 i zamawianie kawy','Rodzaj i liczba rzeczownika (El vs La)','Liczebniki 11-20','Kolory po hiszpańsku','Czasownik Ser – odmiana','Czasownik Estar','Ser czy Estar?','Rodzina – słownictwo','Czasowniki -AR (Hablar)','Czasowniki -ER (Comer)','Czasowniki -IR (Vivir)','Dni tygodnia','Czasownik Tener i wiek','Pory dnia i rutyna','Godziny','Jedzenie – śniadanie','Restauracja – rezerwacja','Zakupy – ubrania','Ciało i lekarz','Dom – pomieszczenia','Pogoda (część 1)','Na lotnisku','Transport','Hobby i czas wolny','Zwierzęta','Miasto – miejsca','Zakupy na targu','Boże Narodzenie','15 najważniejszych przymiotników','Owoce','Pogoda (część 2)','Jak zapytać o drogę','Liczebniki 100–1 000 000','Jak zamówić piwo jak lokalny Hiszpan'];
+    return{id:i+6,icon:icons[i],level:'A1',title:titles[i],stub:true};
+  })
+];
+
+const SCENARIOS=[
+  {id:'waiter',icon:'🍽️',name:'Kelner w tapas barze',
+    sys:'Jesteś kelnerem/kelnerką w tapas barze w Barcelonie. Rozmawiaj WYŁĄCZNIE po hiszpańsku (A1-A2). Pomagaj gościowi zamówić. Błędy gramatyczne poprawiaj dyskretnie po polsku w nawiasie — np. (✏️ Powinno być "quiero", nie "quero"). Zacznij od powitania gościa.'},
+  {id:'doctor',icon:'🩺',name:'Wizyta u lekarza',
+    sys:'Jesteś lekarzem/lekarką w Madrycie. Rozmawiaj WYŁĄCZNIE po hiszpańsku (A1-A2). Pytaj o objawy, ból, samopoczucie. Poprawiaj błędy po polsku w nawiasie. Zacznij od powitania pacjenta.'},
+  {id:'hotel',icon:'🏨',name:'Recepcja hotelowa',
+    sys:'Jesteś pracownikiem recepcji w hotelu w Sewilli. Rozmawiaj WYŁĄCZNIE po hiszpańsku (A1-A2). Pomagaj zameldować się i udzielaj informacji. Poprawiaj błędy po polsku w nawiasie. Zacznij od ciepłego powitania.'},
+  {id:'market',icon:'🛒',name:'Targ warzywny',
+    sys:'Jesteś żywiołowym sprzedawcą na targu w Walencji. Rozmawiaj WYŁĄCZNIE po hiszpańsku (A1-A2). Pomagaj kupić warzywa i owoce, podawaj ceny. Poprawiaj błędy po polsku w nawiasie. Zacznij entuzjastycznie!'},
+  {id:'directions',icon:'🗺️',name:'Pytanie o drogę',
+    sys:'Jesteś przechodniem w centrum Barcelony. Turysta pyta o drogę. Rozmawiaj WYŁĄCZNIE po hiszpańsku (A1-A2). Używaj: todo recto, a la izquierda, a la derecha, gira en. Poprawiaj błędy po polsku w nawiasie.'},
+];
+
+function sm2(card,rating){
+  let{ef=2.5,interval=1,reps=0}=card;
+  if(rating===1){reps=0;interval=1;ef=Math.max(1.3,ef-.2);}
+  else if(rating===2){interval=Math.max(1,Math.round(interval*1.2));ef=Math.max(1.3,ef-.15);reps++;}
+  else if(rating===3){interval=reps===0?1:reps===1?6:Math.round(interval*ef);reps++;}
+  else{interval=reps===0?4:Math.round(interval*ef*1.3);ef=Math.min(2.5,ef+.1);reps++;}
+  return{ef,interval,reps,dueDate:Date.now()+interval*86400000};
+}
+function iLabel(r,card){
+  const{interval}=sm2(card,r);
+  if(interval===1)return'1 dzień';
+  if(interval<7)return`${interval} dni`;
+  if(interval<30)return`${Math.round(interval/7)} tyg.`;
+  return`${Math.round(interval/30)} mies.`;
+}
+function useLS(key,init){
+  const[v,sv]=useState(()=>{try{const s=localStorage.getItem(key);return s?JSON.parse(s):init;}catch{return init;}});
+  useEffect(()=>{try{localStorage.setItem(key,JSON.stringify(v));}catch{}},[key,v]);
+  return[v,sv];
+}
+
+function App(){
+  const[view,setView]=useState('dashboard');
+  const[sel,setSel]=useState(null);
+  const[cards,setCards]=useLS('hcm_cards',[]);
+  const[stats,setStats]=useLS('hcm_stats',{xp:0,streak:0,totalMinutes:0,reviewsDone:0});
+  const[done,setDone]=useLS('hcm_done',[]);
+  const[lang,setLang]=useLS('hcm_lang','es');
+  const[apiKey,setApiKey]=useLS('hcm_apikey','');
+  const[toast,setToast]=useState(null);
+  const showToast=useCallback(msg=>{setToast(msg);setTimeout(()=>setToast(null),3200);},[]);
+  const addXP=useCallback(n=>setStats(p=>({...p,xp:p.xp+n})),[]);
+  const addMins=useCallback(n=>setStats(p=>({...p,totalMinutes:(p.totalMinutes||0)+n})),[]);
+  const due=useMemo(()=>cards.filter(c=>c.dueDate<=Date.now()),[cards]);
+  const lc=LANGS[lang]||LANGS.es;
+  const xpLvl=Math.floor(stats.xp/500)+1;
+  const xpPct=(stats.xp%500)/500*100;
+  const go=v=>{setView(v);setSel(null);};
+  const openLesson=l=>{if(l.stub){showToast('🚧 Ta lekcja będzie dostępna wkrótce!');return;}setSel(l);setView('lesson');};
+  const completeLesson=(lid,newCards)=>{
+    if(!done.includes(lid)){setDone(p=>[...p,lid]);addXP(100);showToast('🎉 Lekcja ukończona! +100 XP');}
+    if(newCards?.length){const ex=new Set(cards.map(c=>c.id));const add=newCards.filter(c=>!ex.has(c.id));if(add.length){setCards(p=>[...p,...add]);showToast(`📚 Dodano ${add.length} fiszek do SRS!`);}}
+  };
+  const updateCard=(id,rating)=>{
+    setCards(p=>p.map(c=>c.id!==id?c:{...c,...sm2(c,rating)}));
+    addXP(rating>=3?5:2);setStats(p=>({...p,reviewsDone:(p.reviewsDone||0)+1}));
+  };
+  const nav=[{id:'dashboard',ic:'🏠',lb:'Pulpit'},{id:'lessons',ic:'📖',lb:'Lekcje'},{id:'flashcards',ic:'🃏',lb:'Fiszki SRS',bd:due.length||null},{id:'roleplay',ic:'🎭',lb:'AI Roleplay'},{id:'progress',ic:'📊',lb:'Postęp'},{id:'settings',ic:'⚙️',lb:'Ustawienia'}];
+  return(
+    <div className="app">
+      <aside className="sb">
+        <div className="sb-logo"><div className="sb-logo-t">HablaConmigo</div><div className="sb-logo-s">Nauka przez zrozumienie</div></div>
+        <div className="sb-lp" onClick={()=>go('settings')}>
+          <span className="sb-lf">{lc.flag}</span>
+          <div className="sb-li"><div className="sb-ln">{lc.name}</div><div className="sb-lc">kliknij, by zmienić</div></div>
+        </div>
+        <div className="sb-xp">
+          <div className="sb-xr"><span>Poziom {xpLvl}</span><span>{stats.xp} XP</span></div>
+          <div className="sb-xb"><div className="sb-xf" style={{width:xpPct+'%'}}/></div>
+        </div>
+        <nav className="sb-nav">
+          {nav.map(n=>(
+            <div key={n.id} className={`ni${view===n.id?' on':''}`} onClick={()=>go(n.id)}>
+              <span className="ni-ic">{n.ic}</span><span>{n.lb}</span>
+              {n.bd?<span className="ni-bd">{n.bd}</span>:null}
+            </div>
+          ))}
+        </nav>
+        <div className="sb-ft">
+          <div className="sk"><span style={{fontSize:22}}>🔥</span><span className="sk-n">{stats.streak}</span><div className="sk-t">dni<br/>z rzędu</div></div>
+        </div>
+      </aside>
+      <main className="main">
+        {view==='dashboard'&&<Dashboard stats={stats} due={due} done={done} lc={lc} onNav={go} onOpen={openLesson}/>}
+        {view==='lessons'&&<LessonsView done={done} onOpen={openLesson}/>}
+        {view==='lesson'&&sel&&<LessonDetail lesson={sel} done={done} onComplete={completeLesson} onBack={()=>go('lessons')} addXP={addXP} showToast={showToast}/>}
+        {view==='flashcards'&&<FlashcardsView cards={cards} due={due} onUpdate={updateCard} addMins={addMins} showToast={showToast}/>}
+        {view==='roleplay'&&<RoleplayView apiKey={apiKey} addMins={addMins} addXP={addXP} showToast={showToast}/>}
+        {view==='progress'&&<ProgressView stats={stats} cards={cards} done={done}/>}
+        {view==='settings'&&<SettingsView lang={lang} setLang={setLang} apiKey={apiKey} setApiKey={setApiKey} showToast={showToast}/>}
+      </main>
+      {toast&&<div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+function Dashboard({stats,due,done,lc,onNav,onOpen}){
+  const h=new Date().getHours();
+  const next=LESSONS.find(l=>!done.includes(l.id)&&!l.stub);
+  return(
+    <div>
+      <div className="ph"><div className="pt">{lc.gr(h)} 👋</div><div className="ps">Gotowi na dzisiejszą sesję {lc.flag} {lc.name}?</div></div>
+      <div className="sg">
+        {[{ic:'🃏',v:due.length,l:'Fiszki na dziś'},{ic:'📖',v:done.length,l:'Ukończone lekcje'},{ic:'⏱️',v:stats.totalMinutes||0,l:'Minuty nauki'},{ic:'⭐',v:stats.xp,l:'Punkty XP'}].map(s=>(
+          <div key={s.l} className="sc"><div className="sc-ic">{s.ic}</div><div className="sc-v">{s.v}</div><div className="sc-l">{s.l}</div></div>
+        ))}
+      </div>
+      {due.length>0&&(
+        <div className="card" style={{marginBottom:22}}>
+          <div className="ch"><span className="ct">🔔 Fiszki zaplanowane na dziś</span><button className="btn btn-p bsm" onClick={()=>onNav('flashcards')}>Zacznij powtórkę →</button></div>
+          <div className="cb"><p style={{fontSize:13,color:'var(--tx2)',marginBottom:9}}>Masz <strong>{due.length}</strong> fiszek do powtórki — algorytm SM-2 zaplanował je dokładnie na ten moment!</p><div className="prbar"><div className="prf" style={{width:'35%'}}/></div></div>
+        </div>
+      )}
+      <div className="stitle">Szybki start</div>
+      <div className="qg">
+        <div className="qc" onClick={()=>onNav('flashcards')}><span className="qi">🃏</span><div className="qtit">Powtórka SRS</div><div className="qdesc">{due.length>0?`${due.length} kart czeka!`:'✓ Wszystko na bieżąco'}</div></div>
+        <div className="qc" onClick={()=>next&&onOpen(next)}><span className="qi">📖</span><div className="qtit">Następna lekcja</div><div className="qdesc">{next?next.title:'Wszystkie ukończone! 🏆'}</div></div>
+        <div className="qc" onClick={()=>onNav('roleplay')}><span className="qi">🎭</span><div className="qtit">AI Roleplay</div><div className="qdesc">Ćwicz konwersację z AI</div></div>
+      </div>
+      <div className="stitle">Jak to działa?</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:13}}>
+        {[{ic:'🧠',t:'System SRS (SM-2)',d:'Algorytm przypomina fiszki dokładnie gdy masz je zapomnieć — jak Anki. Uczysz się mniej, pamiętasz więcej.'},{ic:'🎧',t:'Comprehensible Input',d:'Uczysz się całych zdań w kontekście. Mózg zapamiętuje gotowe konstrukcje 5× szybciej niż pojedyncze słówka.'},{ic:'🎭',t:'AI Roleplay',d:'Chatbot gra rolę (kelner, lekarz, recepcja) i wymusza aktywne pisanie po hiszpańsku. +5 XP za każdą wiadomość.'},{ic:'🔥',t:'Gamifikacja & Postęp',d:'XP, poziomy, streaki i odznaki. Licznik śledzi MINUTY nauki, nie tylko liczbę ukończonych lekcji.'}].map(i=>(
+          <div key={i.t} className="card"><div className="cb"><div style={{fontSize:26,marginBottom:7}}>{i.ic}</div><div style={{fontFamily:"'Playfair Display',serif",fontSize:15,fontWeight:700,marginBottom:5}}>{i.t}</div><div style={{fontSize:12.5,color:'var(--tx2)',lineHeight:1.65}}>{i.d}</div></div></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LessonsView({done,onOpen}){
+  return(
+    <div>
+      <div className="ph"><div className="pt">Lekcje</div><div className="ps">Kurs «Hiszpański Jest Prosty» — 5 dostępnych · 35 wkrótce</div></div>
+      <div className="ib">💡 <strong>Dla par:</strong> Przeczytaj 10 zdań → Dialog czytacie każde w innej roli → Quiz → Dodaj do SRS. Razem raźniej!</div>
+      <div className="lg">
+        {LESSONS.map(l=>{
+          const isDone=done.includes(l.id);const isStub=!!l.stub;
+          return(
+            <div key={l.id} className={`lcard${isDone?' done':''}${isStub?' stub':''}`} onClick={()=>onOpen(l)}>
+              <div className="lnum">LEKCJA {String(l.id).padStart(2,'0')}</div>
+              <span className="lem">{l.icon}</span>
+              <div className="ltit">{l.title}</div>
+              <span className={`ltag${isDone?' td':isStub?' tl':' ta'}`}>{isDone?'✓ Ukończona':isStub?'🔒 Wkrótce':'▶ Dostępna'}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function LessonDetail({lesson,done,onComplete,onBack,addXP,showToast}){
+  const[tab,setTab]=useState('sentences');
+  const[ans,setAns]=useState({});
+  const[sub,setSub]=useState(false);
+  const isDone=done.includes(lesson.id);
+  const addToSRS=()=>{
+    const nc=lesson.sentences.map((s,i)=>({id:`L${lesson.id}_S${i}`,lessonId:lesson.id,lessonTitle:lesson.title,front:s.es,back:s.pl,phonetic:s.ph,note:s.note,ef:2.5,interval:1,reps:0,dueDate:Date.now()+i*15000}));
+    onComplete(lesson.id,nc);
+  };
+  const submitQuiz=()=>{
+    setSub(true);const c=lesson.quiz.filter((q,i)=>ans[i]===q.ok).length;
+    addXP(c*20);showToast(`Quiz: ${c}/${lesson.quiz.length} poprawnych! +${c*20} XP`);
+  };
+  return(
+    <div>
+      <div style={{display:'flex',alignItems:'flex-start',gap:13,marginBottom:22,flexWrap:'wrap'}}>
+        <button className="btn btn-s" onClick={onBack}>← Lekcje</button>
+        <div style={{flex:1}}>
+          <div style={{display:'flex',alignItems:'center',gap:9,flexWrap:'wrap',marginBottom:5}}><span style={{fontSize:28}}>{lesson.icon}</span><div className="pt" style={{fontSize:26}}>{lesson.title}</div></div>
+          <div style={{display:'flex',gap:7,flexWrap:'wrap'}}><span className="badge ba1">A1</span>{isDone&&<span className="badge bok">✓ Ukończona</span>}<span className="badge bsf">{lesson.sentences.length} zdań</span></div>
+        </div>
+        <button className="btn btn-sf" onClick={addToSRS}>🃏 Dodaj do SRS</button>
+      </div>
+      <div className="tabs">{[['sentences','📝 10 Zdań'],['dialog','💬 Dialog'],['quiz','🎯 Quiz']].map(([id,lb])=>(
+        <div key={id} className={`tab${tab===id?' on':''}`} onClick={()=>setTab(id)}>{lb}</div>
+      ))}</div>
+      {tab==='sentences'&&(
+        <div>
+          <p style={{fontSize:12.5,color:'var(--tx3)',marginBottom:14}}>Czytaj zdania głośno — <strong>shadowing</strong> to klucz do dobrej wymowy!</p>
+          {lesson.sentences.map((s,i)=>(
+            <div key={i} className="sw"><span className="snum">{i+1}</span><div className="ses">{s.es}</div><div className="sph">{s.ph}</div><div className="spl">{s.pl}</div><div className="snt">📌 {s.note}</div></div>
+          ))}
+        </div>
+      )}
+      {tab==='dialog'&&(
+        <div>
+          <div className="card" style={{marginBottom:16}}>
+            <div className="ch"><span className="ct">💬 {lesson.dialog.title}</span><div style={{display:'flex',gap:8}}><span className="badge ba1">{lesson.dialog.rA}</span><span className="badge bok">{lesson.dialog.rB}</span></div></div>
+            <div className="cb">
+              <div className="ib" style={{marginBottom:16}}>🎭 <strong>Czytajcie z żoną na głos:</strong> Jedna osoba = <strong>{lesson.dialog.rA}</strong> (🔴), druga = <strong>{lesson.dialog.rB}</strong> (🟢). Powoli, skupiając się na wymowie!</div>
+              {lesson.dialog.lines.map((ln,i)=>(
+                <div key={i} className={`de ${ln.r==='A'?'L':'R'}`}>
+                  <div className="dav">{ln.r==='A'?lesson.dialog.rA[0]:lesson.dialog.rB[0]}</div>
+                  <div className="dbb"><div className="drl">{ln.r==='A'?lesson.dialog.rA:lesson.dialog.rB}</div><div className="des">{ln.es}</div><div className="dpl">{ln.pl}</div></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {tab==='quiz'&&(
+        <div>
+          <div className="ib">🎯 Odpowiedz na wszystkie 3 pytania, potem kliknij "Sprawdź".</div>
+          {lesson.quiz.map((q,qi)=>(
+            <div key={qi} className="card" style={{marginBottom:13}}>
+              <div className="cb">
+                <div className="qq">Pytanie {qi+1}: {q.q}</div>
+                {q.opts.map((opt,oi)=>{
+                  let cls='qopt';
+                  if(sub){cls+=' qdis';if(oi===q.ok)cls+=' qcor';else if(ans[qi]===oi)cls+=' qwrg';}
+                  else if(ans[qi]===oi)cls+=' qsel';
+                  return(<div key={oi} className={cls} onClick={()=>{if(!sub)setAns(p=>({...p,[qi]:oi}));}}>{sub&&oi===q.ok?'✓ ':sub&&ans[qi]===oi?'✗ ':''}{opt}</div>);
+                })}
+              </div>
+            </div>
+          ))}
+          {!sub?(<button className="btn btn-p" disabled={Object.keys(ans).length<lesson.quiz.length} onClick={submitQuiz}>Sprawdź odpowiedzi →</button>):(
+            <div style={{display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
+              <div style={{flex:1,fontSize:13.5,color:'var(--tx2)'}}>✅ Wynik: <strong>{lesson.quiz.filter((q,i)=>ans[i]===q.ok).length}/{lesson.quiz.length}</strong> poprawnych</div>
+              <button className="btn btn-sf" onClick={addToSRS}>🃏 Dodaj zdania do SRS</button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FlashcardsView({cards,due,onUpdate,addMins,showToast}){
+  const[idx,setIdx]=useState(0);const[flip,setFlip]=useState(false);
+  const t0=useRef(Date.now());
+  useEffect(()=>()=>{const m=Math.round((Date.now()-t0.current)/60000);if(m>0)addMins(m);},[]);
+  const cur=due[idx];
+  const rate=r=>{
+    onUpdate(cur.id,r);setFlip(false);
+    if(idx+1>=due.length){const m=Math.round((Date.now()-t0.current)/60000);if(m>0)addMins(m);showToast(`🎉 Sesja gotowa! Powtórzono ${due.length} fiszek.`);setIdx(0);}
+    else setTimeout(()=>setIdx(i=>i+1),40);
+  };
+  if(!due.length)return(
+    <div>
+      <div className="ph"><div className="pt">Fiszki SRS</div><div className="ps">System spaced repetition — algorytm SM-2</div></div>
+      {!cards.length?(
+        <div className="empt"><span className="empt-i">🃏</span><div className="empt-t">Brak fiszek</div><div className="empt-d">Ukończ lekcję i kliknij «Dodaj do SRS».<br/>Wróć jutro po pierwszą powtórkę!</div></div>
+      ):(
+        <div>
+          <div className="empt"><span className="empt-i">✅</span><div className="empt-t">Wszystko powtórzone!</div><div className="empt-d">Masz {cards.length} fiszek w systemie. Następna powtórka zaplanowana przez SM-2.</div></div>
+          <div className="dvd"/>
+          <div className="stitle">Wszystkie fiszki ({cards.length})</div>
+          {cards.map(c=>(<div key={c.id} className="sw" style={{display:'flex',gap:13,alignItems:'center'}}>
+            <div style={{flex:1}}><div className="ses">{c.front}</div><div className="spl" style={{marginBottom:0}}>{c.back}</div></div>
+            <div style={{fontSize:11,color:'var(--tx3)',textAlign:'right',flexShrink:0}}><div>⏱ {c.reps} pow.</div><div>📅 {c.interval||1}d</div></div>
+          </div>))}
+        </div>
+      )}
+    </div>
+  );
+  return(
+    <div>
+      <div className="ph"><div className="pt">Fiszki SRS</div><div className="ps">{idx+1} / {due.length} · {cur?.lessonTitle}</div></div>
+      <div className="ib" style={{marginBottom:18}}>💡 Kliknij fiszkę, by zobaczyć odpowiedź. Oceń szczerze — to klucz do działania SM-2!</div>
+      <div className="fcs" onClick={()=>setFlip(f=>!f)}>
+        <div className={`fc${flip?' flip':''}`}>
+          <div className="ff ff-fr">
+            <div className="fc-lbl">Przetłumacz na polski</div>
+            <div className="fc-txt">{cur?.front}</div>
+            {cur?.phonetic&&<div className="fc-sub">{cur.phonetic}</div>}
+            {!flip&&<div className="fc-sub" style={{marginTop:18}}>👆 kliknij, by sprawdzić</div>}
+          </div>
+          <div className="ff ff-bk">
+            <div className="fc-lbl">Tłumaczenie</div>
+            <div className="fc-txt">{cur?.back}</div>
+            {cur?.note&&<div className="fc-note">📌 {cur.note}</div>}
+          </div>
+        </div>
+      </div>
+      {flip&&(
+        <div className="srsg">
+          {[{r:1,cls:'sr1',lb:'Powtórz',ic:'😅'},{r:2,cls:'sr2',lb:'Trudna',ic:'😓'},{r:3,cls:'sr3',lb:'Dobrze',ic:'🙂'},{r:4,cls:'sr4',lb:'Łatwa',ic:'😄'}].map(b=>(
+            <button key={b.r} className={`srsb ${b.cls}`} onClick={()=>rate(b.r)}><span>{b.ic} {b.lb}</span><span className="sri">{iLabel(b.r,cur)}</span></button>
+          ))}
+        </div>
+      )}
+      <div className="fcdot">{due.map((_,i)=>(<span key={i} style={{display:'inline-block',width:7,height:7,borderRadius:'50%',margin:'0 2px',background:i<idx?'var(--ol)':i===idx?'var(--te)':'var(--bd)'}}/>))}</div>
+    </div>
+  );
+}
+
+function RoleplayView({apiKey,addMins,addXP,showToast}){
+  const[sc,setSc]=useState(null);const[msgs,setMsgs]=useState([]);const[inp,setInp]=useState('');const[loading,setLoading]=useState(false);
+  const t0=useRef(Date.now());const cRef=useRef(null);
+  useEffect(()=>()=>{const m=Math.round((Date.now()-t0.current)/60000);if(m>0)addMins(m);},[]);
+  useEffect(()=>{if(cRef.current)cRef.current.scrollTop=cRef.current.scrollHeight;},[msgs]);
+  const callAI=async(scenario,history)=>{
+    if(!apiKey){setMsgs([{r:'ai',t:'⚠️ Brak klucza Anthropic API. Przejdź do Ustawień i wpisz klucz, by korzystać z AI Roleplay.'}]);return;}
+    setLoading(true);
+    try{
+      const messages=history.length>0?history:[{role:'user',content:'(Zacznij — przywitaj się i wejdź w rolę)'}];
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,system:scenario.sys,messages})});
+      const data=await res.json();
+      setMsgs(h=>[...h,{r:'ai',t:data.content?.[0]?.text||'Lo siento, no entendí.'}]);
+    }catch{setMsgs(h=>[...h,{r:'ai',t:'❌ Błąd połączenia. Sprawdź klucz API w Ustawieniach.'}]);}
+    setLoading(false);
+  };
+  const startSc=scenario=>{setSc(scenario);setMsgs([]);callAI(scenario,[]);};
+  const send=async()=>{
+    if(!inp.trim()||loading)return;
+    const txt=inp.trim();const newMsgs=[...msgs,{r:'user',t:txt}];
+    setMsgs(newMsgs);setInp('');addXP(5);
+    const history=[...msgs.map(m=>({role:m.r==='user'?'user':'assistant',content:m.t})),{role:'user',content:txt}];
+    await callAI(sc,history);
+  };
+  return(
+    <div>
+      <div className="ph"><div className="pt">AI Roleplay 🎭</div><div className="ps">Ćwicz konwersację z AI grającym różne role. +5 XP za każdą wiadomość!</div></div>
+      {!apiKey&&<div className="api-w">⚠️ <strong>Wymagany klucz API:</strong> Przejdź do <strong>Ustawień</strong> i wpisz klucz Anthropic API (console.anthropic.com → API Keys). Klucz przechowywany tylko lokalnie w przeglądarce.</div>}
+      {!sc?(
+        <div>
+          <div className="stitle">Wybierz scenariusz</div>
+          <div className="scng">{SCENARIOS.map(s=>(<div key={s.id} className="scc" onClick={()=>startSc(s)}><span className="sci">{s.icon}</span><div className="scn">{s.name}</div></div>))}</div>
+          <div className="ib">💡 AI mówi TYLKO po hiszpańsku (A1-A2) i dyskretnie poprawia błędy gramatyczne po polsku. Nie bój się błędów — to część nauki!</div>
+          <div className="stitle">Przykładowe pierwsze zdania</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(210px,1fr))',gap:9}}>
+            {[{sc:'🍽️',p:'Hola, ¿me puede traer la carta?'},{sc:'🩺',p:'Buenos días, me duele la cabeza.'},{sc:'🏨',p:'Hola, tengo una reserva a nombre de...'},{sc:'🛒',p:'¿Cuánto cuesta esto, por favor?'}].map(e=>(
+              <div key={e.sc} style={{padding:'11px 13px',background:'var(--cd)',border:'1px solid var(--bd)',borderRadius:9}}><div style={{fontSize:10,fontWeight:700,color:'var(--tx3)',marginBottom:4}}>{e.sc}</div><div className="ses" style={{fontSize:14}}>{e.p}</div></div>
+            ))}
+          </div>
+        </div>
+      ):(
+        <div>
+          <div style={{display:'flex',alignItems:'center',gap:11,marginBottom:14}}>
+            <button className="btn btn-s bsm" onClick={()=>setSc(null)}>← Scenariusze</button>
+            <span style={{fontSize:20}}>{sc.icon}</span><strong style={{fontSize:14}}>{sc.name}</strong>
+            <span style={{marginLeft:'auto',fontSize:12,color:'var(--tx3)'}}>💬 {msgs.filter(m=>m.r==='user').length} wiad. · +{msgs.filter(m=>m.r==='user').length*5} XP</span>
+          </div>
+          <div className="cw" ref={cRef}>
+            {msgs.map((m,i)=>(<div key={i} className={`cm ${m.r==='user'?'u':'a'}`}>{m.t}</div>))}
+            {loading&&(<div className="cm ty">Pisze{[0,1,2].map(i=>(<span key={i} style={{display:'inline-block',width:5,height:5,borderRadius:'50%',background:'var(--tx3)',margin:'0 2px',verticalAlign:'middle',animation:`dot 1.1s ${i*.2}s infinite`}}/>))}</div>)}
+          </div>
+          <div className="cir">
+            <input className="ci" value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}} placeholder="Wpisz po hiszpańsku… (Enter = wyślij)" disabled={loading}/>
+            <button className="btn btn-p" onClick={send} disabled={loading||!inp.trim()}>Wyślij</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProgressView({stats,cards,done}){
+  const xpLvl=Math.floor(stats.xp/500)+1;const xpPct=(stats.xp%500)/500*100;
+  const learned=cards.filter(c=>c.reps>=3).length;const mature=cards.filter(c=>(c.interval||1)>=21).length;
+  const achs=[
+    {ic:'🎓',t:'Pierwsza lekcja',d:'Ukończono lekcję 1',ok:done.length>=1},
+    {ic:'🔥',t:'Uczeń miesiąca',d:'Ukończono 3 lekcje',ok:done.length>=3},
+    {ic:'📚',t:'Biblioteka',d:'Masz 20+ fiszek w SRS',ok:cards.length>=20},
+    {ic:'💫',t:'Mistrz powtórek',d:'Powtórzono 50+ fiszek',ok:(stats.reviewsDone||0)>=50},
+    {ic:'🏆',t:'Kompletny kurs',d:'Ukończono wszystkie dostępne lekcje',ok:done.length>=5},
+    {ic:'⚡',t:'XP Legend',d:'Zdobyto 500+ XP',ok:stats.xp>=500},
+  ];
+  const hm=Array.from({length:49},()=>{const r=Math.random();return r<.45?'':r<.62?'l1':r<.76?'l2':r<.88?'l3':'l4';});
+  return(
+    <div>
+      <div className="ph"><div className="pt">Postęp</div><div className="ps">Szczegółowy przegląd Twojej nauki</div></div>
+      <div className="sg">{[{ic:'⭐',v:stats.xp,l:'Łączne XP'},{ic:'🎓',v:xpLvl,l:'Aktualny poziom'},{ic:'📖',v:done.length,l:'Lekcje'},{ic:'🃏',v:cards.length,l:'Fiszki w SRS'}].map(s=>(<div key={s.l} className="sc"><div className="sc-ic">{s.ic}</div><div className="sc-v">{s.v}</div><div className="sc-l">{s.l}</div></div>))}</div>
+      <div style={{marginBottom:24}}>
+        <div className="stit">📊 Statystyki</div>
+        {[{lbl:'Poziom XP',val:xpPct,txt:`${stats.xp%500}/500 XP do poz. ${xpLvl+1}`},{lbl:'Lekcje',val:done.length/5*100,txt:`${done.length}/5 dostępnych`},{lbl:'Fiszki opanowane',val:cards.length?learned/cards.length*100:0,txt:`${learned}/${cards.length} (≥3 pow.)`},{lbl:'Fiszki dojrzałe',val:cards.length?mature/cards.length*100:0,txt:`${mature} z interwałem ≥21 dni`}].map(p=>(
+          <div key={p.lbl} className="prb"><div className="prl"><span>{p.lbl}</span><span>{p.txt}</span></div><div className="prbar"><div className="prf" style={{width:`${Math.min(100,p.val)}%`}}/></div></div>
+        ))}
+      </div>
+      <div style={{marginBottom:24}}>
+        <div className="stit">📅 Aktywność (7 tygodni)</div>
+        <div className="hmg">{hm.map((c,i)=><div key={i} className={`hmc${c?' '+c:''}`}/>)}</div>
+        <div style={{fontSize:11,color:'var(--tx3)',marginTop:7}}>⬜ brak · 🟥 mała · 🔴 średnia · ❤️ duża aktywność</div>
+      </div>
+      <div>
+        <div className="stit">🏆 Odznaki</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:9}}>
+          {achs.map(a=>(<div key={a.t} className={`ach${!a.ok?' ach-lk':''}`}><div className="ach-i">{a.ic}</div><div><div className="ach-t">{a.t}</div><div className="ach-d">{a.d}</div></div>{a.ok&&<div style={{marginLeft:'auto',fontSize:18}}>✅</div>}</div>))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SettingsView({lang,setLang,apiKey,setApiKey,showToast}){
+  const[draft,setDraft]=useState(apiKey);const[show,setShow]=useState(false);
+  return(
+    <div>
+      <div className="ph"><div className="pt">Ustawienia</div><div className="ps">Personalizacja aplikacji i konfiguracja AI</div></div>
+      <div style={{marginBottom:28}}>
+        <div className="stit">🌍 Wybór języka</div>
+        <div className="los">{Object.entries(LANGS).map(([code,lc])=>(<div key={code} className={`lo${lang===code?' on':''}`} onClick={()=>{setLang(code);showToast(`${lc.flag} Zmieniono na ${lc.name}!`);}}><span className="lo-f">{lc.flag}</span><div className="lo-n">{lc.name}</div><div className="lo-s">{lc.native}</div></div>))}</div>
+        <div className="ib" style={{marginTop:11}}>💡 Treści lekcji są po <strong>Hiszpańsku</strong>. Pełne wsparcie Włoskiego i Francuskiego planowane w v2.</div>
+      </div>
+      <div style={{marginBottom:28}}>
+        <div className="stit">🤖 Anthropic API (AI Roleplay)</div>
+        <div className="ib">Stwórz konto na <strong>console.anthropic.com</strong> → API Keys → nowy klucz. Klucz przechowywany <strong>wyłącznie lokalnie</strong> — nie jest wysyłany nigdzie poza Anthropic API.</div>
+        <div style={{marginBottom:12}}>
+          <label className="fl">Klucz Anthropic API</label>
+          <div style={{display:'flex',gap:8}}>
+            <input className="fi" type={show?'text':'password'} value={draft} onChange={e=>setDraft(e.target.value)} placeholder="sk-ant-api03-..." style={{flex:1,fontFamily:'monospace',fontSize:13}}/>
+            <button className="btn btn-s" onClick={()=>setShow(s=>!s)}>{show?'🙈':'👁'}</button>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn btn-p" onClick={()=>{setApiKey(draft);showToast('✅ Klucz zapisany!');}}>Zapisz</button>
+          {apiKey&&<button className="btn btn-s" onClick={()=>{setApiKey('');setDraft('');showToast('Klucz usunięty');}}>Usuń</button>}
+        </div>
+        {apiKey&&<div style={{marginTop:10,fontSize:12,color:'var(--ol)',fontWeight:700}}>✅ Klucz skonfigurowany — AI Roleplay aktywny!</div>}
+      </div>
+      <div style={{marginBottom:28}}>
+        <div className="stit">🗑️ Dane & Prywatność</div>
+        <p style={{fontSize:13,color:'var(--tx2)',marginBottom:13,lineHeight:1.65}}>Wszystkie dane przechowywane <strong>lokalnie w przeglądarce</strong> (localStorage). Żadnych serwerów.</p>
+        <button className="btn btn-s" onClick={()=>{if(window.confirm('Usunąć WSZYSTKIE dane? Tego nie można cofnąć!')){localStorage.clear();window.location.reload();}}}>🗑️ Wyczyść wszystkie dane</button>
+      </div>
+      <div>
+        <div className="stit">📖 O aplikacji</div>
+        <div style={{fontSize:13,color:'var(--tx2)',lineHeight:1.85}}>
+          <strong>HablaConmigo</strong> — nauka języka metodą Comprehensible Input + SRS.<br/>
+          Inspirowane: <em>Anki</em> (SRS), <em>LingQ</em> (zdania w kontekście), <em>Taalhammer</em> (całe frazy), <em>Pimsleur</em> (powtórki audytywne).<br/>
+          Treści: kurs <em>«Hiszpański Jest Prosty»</em> Katarzyny Krzemińskiej.<br/>
+          Wersja 1.0 · React 18 · SM-2 · Claude API
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
